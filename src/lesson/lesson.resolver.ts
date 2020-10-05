@@ -1,5 +1,6 @@
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { NewLessonDto } from './dto/new-lesson.dto';
+import { NewLessonInput } from './inputs/new-lesson.input';
 import { Lesson } from './lesson.entity';
 import { LessonService } from './lesson.service';
 import { LessonType } from './lesson.type';
@@ -8,26 +9,20 @@ import { LessonType } from './lesson.type';
 export class LessonResolver {
   constructor(private lessonService: LessonService) {}
   @Query(returns => LessonType)
-  lesson() {
-    return {
-      id: '1',
-      name: 'Japanese Class',
-      initDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-    };
+  async getLessonById(@Args('id') id: string): Promise<Lesson> {
+    return this.lessonService.getLessonById(id);
+  }
+
+  @Query(returns => [LessonType], {})
+  async getAllLessons(): Promise<Lesson[]> {
+    return this.lessonService.getAllLessons();
   }
 
   @Mutation(returns => LessonType)
+  @UsePipes(ValidationPipe)
   async createLesson(
-    @Args('name') name: string,
-    @Args('startDate') startDate: string,
-    @Args('endDate') endDate: string,
+    @Args('newLessonInput') newLessonInput: NewLessonInput,
   ): Promise<Lesson> {
-    const newLessonDto: NewLessonDto = new NewLessonDto(
-      name,
-      startDate,
-      endDate
-    );
-    return this.lessonService.createLesson(newLessonDto);
+    return this.lessonService.createLesson(newLessonInput);
   }
 }
