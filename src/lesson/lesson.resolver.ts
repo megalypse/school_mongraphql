@@ -1,5 +1,6 @@
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AssignStudentInput } from './inputs/assign-students.input';
 import { NewLessonInput } from './inputs/new-lesson.input';
 import { Lesson } from './lesson.entity';
 import { LessonService } from './lesson.service';
@@ -24,5 +25,13 @@ export class LessonResolver {
     @Args('newLessonInput') newLessonInput: NewLessonInput,
   ): Promise<Lesson> {
     return this.lessonService.createLesson(newLessonInput);
+  }
+
+  @Mutation(_ => LessonType)
+  @UsePipes(ValidationPipe)
+  async assignStudentsToLesson(
+    @Args('assignStudentsInput') assignStudentsInput: AssignStudentInput,
+  ) {
+    return this.lessonService.assignStudentsToLesson(assignStudentsInput);
   }
 }

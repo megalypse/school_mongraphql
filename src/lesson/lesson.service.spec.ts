@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { NewLessonInput } from './inputs/new-lesson.input';
 import { Lesson } from './lesson.entity';
 import { LessonService } from './lesson.service';
 
@@ -37,7 +38,7 @@ describe('LessonService', () => {
     jest.spyOn(lessonRepository, 'create');
     jest.spyOn(lessonRepository, 'save');
 
-    lessonService.createLesson(mockLessonObject.name, mockLessonObject.startDate, mockLessonObject.endDate);
+    lessonService.createLesson(mockLessonObject as NewLessonInput);
     expect(lessonRepository.create).toHaveBeenCalledTimes(1);
     expect(lessonRepository.save).toHaveBeenCalledTimes(1)
     expect(lessonRepository.save).toHaveBeenCalledWith(mockLessonObject);
